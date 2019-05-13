@@ -10,41 +10,63 @@ import "fmt"
 const version = "dev"
 func main() {
 	fmt.Printf("running %s version", version)
-	}
+}
 
-	```
-	好，新建一个dev_config.go文件，代码如下
-	```
-	// +build dev
+```
+好，新建一个dev_config.go文件，代码如下
+```
+// +build dev
 
-	package main
+package main
 
-	var version = "DEV"
-	```
-	上面代码的关键是 `// +build dev`这行代码，注意这行代码前后须有一个空行隔开，例如在第一行时，接下来要空出一行。这个文件只会被go bulid识别到，而go run等命令不会去识别这个文件，而且vscode等编辑器也会略过这个文件。
-	再新建一个文件release_config.go,代码如下
-	```
-	// +build release
+var version = "DEV"
+```
+上面代码的关键是 `// +build dev`这行代码，注意这行代码前后须有一个空行隔开，例如在第一行时，接下来要空出一行。这个文件只会被go bulid识别到，而go run等命令不会去识别这个文件，而且vscode等编辑器也会略过这个文件。
+再新建一个文件release_config.go,代码如下
+```
+// +build release
 
-	package main
+package main
 
-	const version = "RELEASE"
-	```
-	代码已经准备完毕，还有一个地方要注意，需要去掉main.go中的`const version = 'dev'`这行代码，否则，go bulid命令会报version重复定义。     
-	执行命令如下：
-	```
-	lin@DESKTOP-HQI5HRL MINGW64 /g/workspace/GoWorkspace/src
-	$ go build -tags dev -o dev_version
+const version = "RELEASE"
+```
+代码已经准备完毕，还有一个地方要注意，需要去掉main.go中的`const version = 'dev'`这行代码，否则，go bulid命令会报version重复定义。     
+执行命令如下：
+```
+lin@DESKTOP-HQI5HRL MINGW64 /g/workspace/GoWorkspace/src
+$ go build -tags dev -o dev_version
 
-	lin@DESKTOP-HQI5HRL MINGW64 /g/workspace/GoWorkspace/src
-	$ ./dev_version
-	running DEV version
+lin@DESKTOP-HQI5HRL MINGW64 /g/workspace/GoWorkspace/src
+$ ./dev_version
+running DEV version
 
-	lin@DESKTOP-HQI5HRL MINGW64 /g/workspace/GoWorkspace/src
-	$ go build -tags release -o release_version
+lin@DESKTOP-HQI5HRL MINGW64 /g/workspace/GoWorkspace/src
+$ go build -tags release -o release_version
 
-	lin@DESKTOP-HQI5HRL MINGW64 /g/workspace/GoWorkspace/src
-	$ ./release_version
-	running RELEASE version
-	```
+lin@DESKTOP-HQI5HRL MINGW64 /g/workspace/GoWorkspace/src
+$ ./release_version
+running RELEASE version
+```
+go build还支持通过命令行传递编译参数，通过-ldflags参数实现，将main.go修改为
+```
+package main
 
+import "fmt"
+
+// HINT: You might need to move this declaration to a different file.
+var version string
+
+func main() {
+	fmt.Printf("running %s version", version)
+}
+```
+命令行执行：
+```
+lin@DESKTOP-HQI5HRL MINGW64 /g/workspace/GoWorkspace/src
+$ go build -ldflags '-X main.version="dev"' -o dev_version
+
+lin@DESKTOP-HQI5HRL MINGW64 /g/workspace/GoWorkspace/src
+$ ./dev_version
+running "dev" version
+lin@DESKTOP-HQI5HRL MINGW64 /g/workspace/GoWorkspace/src
+```
