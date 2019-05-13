@@ -47,3 +47,26 @@ lin@DESKTOP-HQI5HRL MINGW64 /g/workspace/GoWorkspace/src
 $ ./release_version
 running RELEASE version
 ```
+go build还支持通过命令行传递编译参数，通过-ldflags参数实现，将main.go修改为
+```
+package main
+
+import "fmt"
+
+// HINT: You might need to move this declaration to a different file.
+var version string
+
+func main() {
+	fmt.Printf("running %s version", version)
+}
+```
+命令行执行：
+```
+lin@DESKTOP-HQI5HRL MINGW64 /g/workspace/GoWorkspace/src
+$ go build -ldflags '-X main.version="dev"' -o dev_version
+
+lin@DESKTOP-HQI5HRL MINGW64 /g/workspace/GoWorkspace/src
+$ ./dev_version
+running "dev" version
+lin@DESKTOP-HQI5HRL MINGW64 /g/workspace/GoWorkspace/src
+```
